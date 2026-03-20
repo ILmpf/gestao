@@ -9,23 +9,17 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 
 #[ObservedBy(ConfigObserver::class)]
-class Empresa extends Model
+class TaxaIva extends Model
 {
-    protected $table = 'empresas';
+    protected $table = 'taxas_iva';
 
-    protected $fillable = [
-        'nome',
-        'logo',
-        'morada',
-        'codigo_postal',
-        'cidade',
-        'nif',
-    ];
+    protected $fillable = ['nome', 'taxa', 'ativo'];
 
     protected function casts(): array
     {
         return [
-            'nif' => 'encrypted',
+            'ativo' => 'boolean',
+            'taxa' => 'decimal:2',
         ];
     }
 }

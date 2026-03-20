@@ -8,6 +8,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -29,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         Model::shouldBeStrict();
         Model::automaticallyEagerLoadRelationships();
+
+        // Administrador bypasses all permission gates
+        Gate::before(function ($user, string $ability): ?bool {
+            return $user->hasRole('Administrador') ? true : null;
+        });
     }
 
     /**

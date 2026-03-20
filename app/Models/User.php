@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Observers\UtilizadorObserver;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
+#[ObservedBy(UtilizadorObserver::class)]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -26,8 +29,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'mobile',
-        'status',
+        'telemovel',
+        'estado',
     ];
 
     /**
@@ -54,6 +57,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'telemovel' => 'encrypted',
+            'estado' => 'string',
         ];
     }
 }

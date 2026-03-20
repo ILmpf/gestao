@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Config\AcaoCalendarioController;
+use App\Http\Controllers\Gestao\PermissaoController;
+use App\Http\Controllers\Gestao\UtilizadorController;
 use App\Http\Controllers\Config\ArtigoController;
 use App\Http\Controllers\Config\EmpresaController;
 use App\Http\Controllers\Config\FuncaoContatoController;
@@ -8,6 +10,7 @@ use App\Http\Controllers\Config\PaisController;
 use App\Http\Controllers\Config\TaxaIvaController;
 use App\Http\Controllers\Config\TipoCalendarioController;
 use App\Http\Controllers\ContaBancariaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContaCorrenteClienteController;
 use App\Http\Controllers\ContatoController;
 use App\Http\Controllers\EncomendaClienteController;
@@ -25,8 +28,8 @@ Route::inertia('/', 'Welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+Route::middleware(['auth', 'verified', 'check.route.permission'])->group(function () {
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     // VIES 
     Route::get('vies/lookup', [ViesController::class, 'lookup'])->name('vies.lookup');
@@ -127,8 +130,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('arquivo-digital', 'Placeholder')->name('arquivo-digital.index');
 
     // Gestão de Acessos
-    Route::inertia('gestao-acessos/utilizadores', 'Placeholder')->name('gestao-acessos.utilizadores.index');
-    Route::inertia('gestao-acessos/permissoes', 'Placeholder')->name('gestao-acessos.permissoes.index');
+    Route::prefix('gestao-acessos')->name('gestao-acessos.')->group(function () {
+        Route::get('utilizadores', [UtilizadorController::class, 'index'])->name('utilizadores.index');
+        Route::get('utilizadores/create', [UtilizadorController::class, 'create'])->name('utilizadores.create');
+        Route::post('utilizadores', [UtilizadorController::class, 'store'])->name('utilizadores.store');
+        Route::get('utilizadores/{utilizador}/edit', [UtilizadorController::class, 'edit'])->name('utilizadores.edit');
+        Route::put('utilizadores/{utilizador}', [UtilizadorController::class, 'update'])->name('utilizadores.update');
+        Route::delete('utilizadores/{utilizador}', [UtilizadorController::class, 'destroy'])->name('utilizadores.destroy');
+        Route::get('permissoes', [PermissaoController::class, 'index'])->name('permissoes.index');
+        Route::get('permissoes/create', [PermissaoController::class, 'create'])->name('permissoes.create');
+        Route::post('permissoes', [PermissaoController::class, 'store'])->name('permissoes.store');
+        Route::get('permissoes/{permissao}/edit', [PermissaoController::class, 'edit'])->name('permissoes.edit');
+        Route::put('permissoes/{permissao}', [PermissaoController::class, 'update'])->name('permissoes.update');
+        Route::delete('permissoes/{permissao}', [PermissaoController::class, 'destroy'])->name('permissoes.destroy');
+    });
 
     // Configurações
     Route::prefix('configuracoes')->name('configuracoes.')->group(function () {

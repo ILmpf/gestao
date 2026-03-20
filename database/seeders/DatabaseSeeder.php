@@ -25,15 +25,14 @@ use App\Models\TaxaIva;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
         $this->seedReferenceData();
-
-        // Users
-        User::factory()->count(8)->create();
 
         // Entidades
         $clientes = Entidade::factory()->cliente()->count(30)->create();
@@ -259,7 +258,34 @@ class DatabaseSeeder extends Seeder
             FuncaoContato::firstOrCreate(['nome' => $f], ['nome' => $f, 'ativo' => true]);
         }
 
-        User::firstOrCreate(
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'Administrador', 'guard_name' => 'web'],
+        );
+
+        // Give the Administrador role every possible permission
+        $allMenus = [
+            'clientes', 'fornecedores', 'contactos', 'propostas',
+            'encomendas-clientes', 'encomendas-fornecedores',
+            'faturas-clientes', 'faturas-fornecedores', 'notas-credito',
+            'contas-bancarias', 'conta-corrente', 'calendario', 'arquivo-digital',
+            'utilizadores', 'permissoes',
+            'config-paises', 'config-funcoes-contacto', 'config-tipos-calendario',
+            'config-accoes-calendario', 'config-artigos', 'config-taxas-iva',
+            'config-logs', 'config-empresa',
+        ];
+
+        $allPermissions = collect($allMenus)
+            ->flatMap(fn (string $menu) => array_map(
+                fn (string $action) => "{$menu}.{$action}",
+                ['ver', 'criar', 'editar', 'eliminar'],
+            ))
+            ->map(fn (string $name) => Permission::firstOrCreate(
+                ['name' => $name, 'guard_name' => 'web'],
+            ));
+
+        $adminRole->syncPermissions($allPermissions);
+
+        $admin = User::firstOrCreate(
             ['email' => 'admin@gestao.test'],
             [
                 'name' => 'Administrador',
@@ -267,5 +293,7 @@ class DatabaseSeeder extends Seeder
                 'estado' => 'ativo',
             ],
         );
+
+        $admin->assignRole($adminRole);
     }
 }

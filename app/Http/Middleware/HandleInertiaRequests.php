@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -44,6 +46,20 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
+            'empresa' => fn () => cache()->remember('empresa_sidebar', 300, function (): array {
+                $empresa = Empresa::first();
+
+                return [
+                    'nome' => $empresa?->nome,
+                    'logo_url' => $empresa?->logo
+                        ? Storage::disk('public')->url($empresa->logo)
+                        : null,
+                ];
+            }),
         ];
     }
 }

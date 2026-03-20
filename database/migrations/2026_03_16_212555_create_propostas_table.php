@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('data_proposta')->nullable();
             $table->foreignId('entidade_id')->constrained('entidades')->cascadeOnDelete();
             $table->date('validade')->nullable();
-            $table->enum('estado', ['apresentada', 'fechada', 'rejeitada'])->default('apresentada');
+            $table->enum('estado', ['apresentada', 'concluida', 'rejeitada'])->default('apresentada');
             $table->timestamps();
             $table->softDeletes();
         });

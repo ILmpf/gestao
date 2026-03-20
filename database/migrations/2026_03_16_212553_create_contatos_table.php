@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('telefone')->nullable();
             $table->string('telemovel')->nullable();
             $table->string('email')->nullable();
-            $table->boolean('consentimento_rgpd')->default(false);
             $table->text('notas')->nullable();
             $table->enum('estado', ['ativo', 'inativo'])->default('ativo');
             $table->timestamps();

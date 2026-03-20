@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('data_encomenda')->nullable();
             $table->foreignId('entidade_id')->constrained('entidades')->cascadeOnDelete();
             $table->foreignId('encomenda_cliente_id')->nullable()->constrained('encomendas_clientes')->nullOnDelete();
-            $table->enum('status', ['em_progresso', 'concluida', 'cancelada'])->default('em_progresso');
+            $table->enum('estado', ['em_progresso', 'concluida', 'cancelada'])->default('em_progresso');
             $table->timestamps();
             $table->softDeletes();
         });

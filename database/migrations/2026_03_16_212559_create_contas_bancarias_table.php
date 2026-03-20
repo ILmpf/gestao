@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nome');
             $table->string('iban')->nullable();
             $table->string('bic')->nullable();
-            $table->decimal('saldo', 15, 2)->default(0);
             $table->boolean('ativa')->default(true);
             $table->timestamps();
         });

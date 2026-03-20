@@ -6,30 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('conta_corrente_clientes', function (Blueprint $table) {
+        Schema::create('faturas_clientes', function (Blueprint $table) {
             $table->id();
+            $table->string('numero', 50);
+            $table->date('data_fatura');
+            $table->date('data_vencimento')->nullable();
             $table->foreignId('entidade_id')->constrained('entidades')->cascadeOnDelete();
             $table->foreignId('encomenda_cliente_id')->nullable()->constrained('encomendas_clientes')->nullOnDelete();
-            $table->string('descricao');
-            $table->string('tipo', 20)->default('manual');
-            $table->decimal('debito', 10, 2)->default(0);
-            $table->decimal('credito', 10, 2)->default(0);
-            $table->decimal('saldo', 10, 2)->default(0);
-            $table->date('data');
+            $table->decimal('valor_total', 10, 2)->default(0);
+            $table->string('caminho_documento')->nullable();
+            $table->enum('estado', ['pendente', 'paga'])->default('pendente');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('conta_corrente_clientes');
+        Schema::dropIfExists('faturas_clientes');
     }
 };
